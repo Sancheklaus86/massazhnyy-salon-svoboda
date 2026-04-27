@@ -1,0 +1,466 @@
+# Cursor AI Rules - Массажный салон Свобода
+
+## 📋 Обзор проекта
+
+Это showcase-сайт для массажного салона "Свобода" в Тольятти, демонстрирующий возможности современной веб-разработки (вайбкодинг) и продвигающий услуги массажа.
+
+**Стек:** Next.js 14, React 18, TypeScript, Tailwind CSS, Framer Motion
+**Цель:** Создание интерактивной витрины где каждый блок показывает крутую возможность веб-разработки
+
+---
+
+## 🎯 Принципы разработки
+
+### 1. TypeScript-First
+- ✅ ВСЕ файлы должны быть .ts или .tsx
+- ✅ Всегда определять типы для props
+- ✅ Избегать `any`, использовать `unknown` или proper types
+- ✅ Использовать generics где уместно
+- ❌ НЕ использовать `as` без крайней необходимости
+
+### 2. Component Structure
+```tsx
+// Правильная структура компонента:
+import { motion } from 'framer-motion';
+import { cn } from '@/lib/cn';
+
+interface ComponentProps {
+  className?: string;
+  // ... другие props
+}
+
+export function Component({ className, ...props }: ComponentProps) {
+  return (
+    <div className={cn('base-classes', className)}>
+      {/* content */}
+    </div>
+  );
+}
+```
+
+### 3. Tailwind CSS
+- ✅ Использовать utility-first подход
+- ✅ Группировать классы: layout -> spacing -> typography -> colors -> effects
+- ✅ Использовать `cn()` для условных классов
+- ✅ Responsive префиксы: mobile-first (базовые стили -> sm: -> md: -> lg:)
+- ❌ НЕ писать inline styles без крайней необходимости
+- ❌ НЕ использовать @apply (кроме globals.css)
+
+Пример:
+```tsx
+<div className={cn(
+  // Layout
+  'flex items-center justify-between',
+  // Spacing
+  'px-4 py-2 gap-2',
+  // Typography
+  'text-lg font-semibold',
+  // Colors
+  'bg-primary text-white',
+  // Effects
+  'rounded-lg shadow-lg hover:shadow-xl transition-shadow',
+  // Conditional
+  isActive && 'ring-2 ring-accent',
+  className
+)} />
+```
+
+### 4. Framer Motion
+- ✅ Использовать variants для сложных анимаций
+- ✅ Определять variants в `lib/animations.ts` для переиспользования
+- ✅ Использовать `whileHover`, `whileTap` для интерактивности
+- ✅ Использовать `AnimatePresence` для exit анимаций
+- ✅ Оптимизировать: `layout`, `layoutId` для layout animations
+- ❌ НЕ анимировать width/height напрямую (использовать scale)
+
+Пример:
+```tsx
+import { fadeInUp } from '@/lib/animations';
+
+<motion.div
+  initial="initial"
+  animate="animate"
+  variants={fadeInUp}
+  whileHover={{ scale: 1.05 }}
+  whileTap={{ scale: 0.95 }}
+/>
+```
+
+### 5. Performance
+- ✅ Использовать `next/image` для всех изображений
+- ✅ Lazy load компоненты с `next/dynamic`
+- ✅ Мемоизация: `useMemo`, `useCallback` для expensive calculations
+- ✅ Избегать ре-рендеров: `React.memo` для pure components
+- ❌ НЕ делать expensive operations в render
+
+### 6. Accessibility
+- ✅ Semantic HTML: `<section>`, `<article>`, `<nav>`, `<button>`
+- ✅ ARIA labels где необходимо
+- ✅ Keyboard navigation (Tab, Enter, Escape)
+- ✅ Focus indicators (не удалять outline)
+- ✅ Color contrast WCAG AA минимум
+- ✅ Alt text для всех изображений
+
+---
+
+## 📁 Структура файлов
+
+```
+src/
+├── app/              # Next.js App Router
+├── components/
+│   ├── sections/    # Секции страницы (HeroSection, etc.)
+│   ├── ui/          # Переиспользуемые UI компоненты
+│   ├── effects/     # Эффекты и анимации
+│   └── layout/      # Layout компоненты
+├── lib/             # Утилиты и хелперы
+├── contexts/        # React Contexts
+├── hooks/           # Custom Hooks
+├── styles/          # Стили и темы
+└── types/           # TypeScript типы
+```
+
+### Именование файлов:
+- Компоненты: `PascalCase.tsx` (HeroSection.tsx)
+- Хуки: `camelCase.ts` (useScrollAnimation.ts)
+- Утилиты: `camelCase.ts` (animations.ts)
+- Типы: `camelCase.ts` (components.ts)
+
+---
+
+## 🎨 Цветовая палитра
+
+### Тёмная тема (основная):
+```typescript
+background: {
+  primary: '#0A0A0F',    // Главный фон
+  secondary: '#13131A',  // Вторичный фон
+  tertiary: '#1A1A24',   // Фон карточек
+}
+text: {
+  primary: '#FFFFFF',
+  secondary: '#B4B4C8',
+  tertiary: '#8484A0',
+}
+accent: {
+  primary: '#6366F1',    // Indigo
+  secondary: '#8B5CF6',  // Purple
+  tertiary: '#EC4899',   // Pink
+}
+```
+
+### Использование в коде:
+```tsx
+// Tailwind classes
+<div className="bg-[#0A0A0F] text-white" />
+
+// Или через theme extension в tailwind.config.ts
+<div className="bg-dark-primary text-light-primary" />
+```
+
+---
+
+## 🎭 Анимации
+
+### Стандартные variants (используй из lib/animations.ts):
+
+```typescript
+// Появление снизу
+fadeInUp: {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  transition: { duration: 0.5 }
+}
+
+// Stagger для списков
+staggerContainer: {
+  animate: {
+    transition: { staggerChildren: 0.1 }
+  }
+}
+
+// Hover scale
+scaleOnHover: {
+  rest: { scale: 1 },
+  hover: { scale: 1.05 }
+}
+```
+
+### Когда создавать новые variants:
+- Если анимация используется в 2+ местах → lib/animations.ts
+- Если уникальная для компонента → inline в компоненте
+
+---
+
+## 📝 Комментарии и документация
+
+### JSDoc для компонентов:
+```tsx
+/**
+ * Hero секция с анимированным фоном
+ * 
+ * @example
+ * <HeroSection />
+ */
+export function HeroSection({ className }: HeroSectionProps) {
+  // ...
+}
+```
+
+### Inline комментарии:
+- ✅ Объясняй "почему", не "что"
+- ✅ Сложная логика всегда с комментарием
+- ❌ НЕ комментируй очевидное
+
+Плохо:
+```tsx
+// Устанавливаем isOpen в true
+setIsOpen(true);
+```
+
+Хорошо:
+```tsx
+// Открываем модальное окно при первом посещении
+if (!hasVisited) {
+  setIsOpen(true);
+}
+```
+
+---
+
+## 🔍 Code Review Checklist
+
+Перед коммитом проверь:
+
+- [ ] TypeScript типы определены корректно
+- [ ] Нет ошибок ESLint
+- [ ] Код отформатирован (Prettier)
+- [ ] Компонент responsive (протестирован на mobile/tablet/desktop)
+- [ ] Анимации плавные (60fps)
+- [ ] Нет console.log в коде
+- [ ] Accessibility: keyboard navigation работает
+- [ ] Semantic HTML использован
+- [ ] Изображения оптимизированы (WebP, lazy load)
+- [ ] Нет дублирования кода
+
+---
+
+## 🚫 Чего избегать
+
+### ❌ Bad Patterns:
+
+```tsx
+// ❌ Inline styles
+<div style={{ color: 'red' }} />
+
+// ❌ Any type
+const data: any = fetchData();
+
+// ❌ Expensive operations в render
+function Component() {
+  const data = heavyComputation(); // Будет вызываться каждый render!
+  return <div>{data}</div>;
+}
+
+// ❌ Неправильная структура компонента
+export default function Component() { } // default export
+
+// ❌ Неправильное использование useState
+const [state, setState] = useState();
+setState(prevState => prevState + 1); // prevState может быть undefined!
+```
+
+### ✅ Good Patterns:
+
+```tsx
+// ✅ Tailwind classes
+<div className="text-red-500" />
+
+// ✅ Proper typing
+interface Data { /* ... */ }
+const data: Data = fetchData();
+
+// ✅ Мемоизация
+function Component() {
+  const data = useMemo(() => heavyComputation(), [deps]);
+  return <div>{data}</div>;
+}
+
+// ✅ Named export
+export function Component() { }
+
+// ✅ Safe useState
+const [count, setCount] = useState<number>(0);
+setCount(prev => prev + 1);
+```
+
+---
+
+## 🎯 Специфичные правила проекта
+
+### 1. Секции (components/sections/)
+- Каждая секция - отдельный файл
+- Минимальная высота: `min-h-screen` или разумная высота
+- Padding: `py-20 md:py-32` (больше на desktop)
+- Container: всегда обёрнут в `<Container>` или `max-w-7xl mx-auto px-4`
+
+### 2. Карточки (Card компоненты)
+- Всегда используй `GlassCard` для glassmorphism эффекта
+- Hover эффект: минимум `hover:shadow-xl transition-shadow`
+- Используй Framer Motion для scale на hover
+
+### 3. Кнопки
+- Всегда используй компонент `<Button>`, не `<button>`
+- Variants: primary (для CTA), secondary, outline, ghost
+- Всегда указывай `type="button"` если не submit
+
+### 4. Анимации при scroll
+- Используй `useInView` хук
+- Once: true (анимация 1 раз при входе в viewport)
+- Threshold: 0.1 (10% элемента видно)
+
+```tsx
+const { ref, isInView } = useInView({ once: true, threshold: 0.1 });
+
+<motion.div
+  ref={ref}
+  initial="initial"
+  animate={isInView ? "animate" : "initial"}
+  variants={fadeInUp}
+/>
+```
+
+### 5. Responsive дизайн
+Breakpoints:
+- mobile: базовые стили (до 640px)
+- sm: 640px (mobile landscape)
+- md: 768px (tablet)
+- lg: 1024px (desktop)
+- xl: 1280px (large desktop)
+
+Всегда тестируй на:
+- Mobile: 375px (iPhone SE)
+- Tablet: 768px (iPad)
+- Desktop: 1920px (Full HD)
+
+---
+
+## 📚 Документация
+
+**Всегда читай перед работой:**
+- `docs/PROJECT_OVERVIEW.md` - общий обзор
+- `docs/ARCHITECTURE.md` - архитектура
+- `docs/TECH_STACK.md` - технологии
+- `docs/CURRENT_STATUS.md` - текущие задачи
+
+**Обновляй при изменениях:**
+- `CURRENT_STATUS.md` - отмечай выполненные задачи
+- Добавляй новые компоненты в ARCHITECTURE.md
+
+---
+
+## 🔥 Quick Commands
+
+```bash
+# Разработка
+npm run dev          # Запуск dev сервера (localhost:3000)
+
+# Build
+npm run build        # Production build
+npm start            # Запуск production сервера
+
+# Lint & Format
+npm run lint         # ESLint проверка
+npm run format       # Prettier форматирование
+
+# Type Check
+npm run type-check   # TypeScript проверка
+```
+
+---
+
+## 💡 Tips & Tricks
+
+### Framer Motion оптимизация:
+```tsx
+// ✅ Используй layout для smooth size transitions
+<motion.div layout />
+
+// ✅ Используй layoutId для shared element transitions
+<motion.div layoutId="card-1" />
+
+// ✅ Оптимизируй transforms (GPU-accelerated)
+animate={{ x: 100, y: 50, scale: 1.5 }} // ✅
+animate={{ left: 100, top: 50, width: '150%' }} // ❌ slow
+```
+
+### Tailwind темы:
+```tsx
+// ✅ Используй dark: prefix для тёмной темы
+<div className="bg-white dark:bg-[#0A0A0F]" />
+```
+
+### Next.js Image:
+```tsx
+import Image from 'next/image';
+
+<Image
+  src="/images/hero-bg.jpg"
+  alt="Описание изображения"
+  width={1920}
+  height={1080}
+  priority // Для hero изображений
+  placeholder="blur" // Для улучшения UX
+/>
+```
+
+---
+
+## 🎨 Дизайн-система
+
+### Spacing (используй в Tailwind):
+- xs: 0.5rem (2)
+- sm: 0.75rem (3)
+- md: 1rem (4)
+- lg: 1.5rem (6)
+- xl: 2rem (8)
+- 2xl: 3rem (12)
+- 3xl: 4rem (16)
+
+### Typography:
+- Заголовки: `font-bold`
+- Body: `font-normal`
+- Акценты: `font-semibold`
+
+Размеры:
+- h1: `text-5xl md:text-7xl`
+- h2: `text-4xl md:text-6xl`
+- h3: `text-3xl md:text-5xl`
+- body: `text-base md:text-lg`
+
+### Shadows:
+- sm: `shadow-sm`
+- md: `shadow-md`
+- lg: `shadow-lg`
+- xl: `shadow-xl`
+- glow: `shadow-[0_0_20px_rgba(99,102,241,0.3)]`
+
+---
+
+## 🚀 Deployment Checklist
+
+Перед деплоем:
+- [ ] `npm run build` успешно
+- [ ] Нет TypeScript ошибок
+- [ ] Нет console.log/console.error
+- [ ] Все изображения оптимизированы
+- [ ] Meta tags настроены (SEO)
+- [ ] Lighthouse score > 90
+- [ ] Тестирование на mobile/tablet/desktop
+- [ ] Privacy Policy и Terms страницы готовы
+
+---
+
+**Помни:** Каждый блок должен впечатлять! Это showcase проект - показывай возможности современной веб-разработки на максимум. 🚀
+
+**Вопросы?** Проверь документацию в `/docs` или спроси у команды.

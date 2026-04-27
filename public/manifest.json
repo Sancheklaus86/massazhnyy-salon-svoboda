@@ -1,0 +1,16 @@
+{
+  "name": "Массажный салон Свобода",
+  "short_name": "Свобода",
+  "description": "Профессиональный массаж в Тольятти",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0A0F",
+  "theme_color": "#6366F1",
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "64x64 32x32 24x24 16x16",
+      "type": "image/x-icon"
+    }
+  ]
+}
