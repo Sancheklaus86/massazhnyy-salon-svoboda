@@ -12,12 +12,28 @@
 - **Lucide React** - Современные иконки
 - **Dikidi.net** - Онлайн-запись клиентов
 
-## 📦 Установка
+## 🌐 Production
+
+**Сайт развёрнут и доступен:**
+- 🔗 http://vm15793355.example.com
+- 🔗 http://171.22.135.61
+
+**Технический стек сервера:**
+- Ubuntu 24.04 LTS (Linux 6.8.0-110)
+- Node.js 24.14.1 LTS
+- PM2 6.0.14 (process manager)
+- Nginx 1.28.2 (reverse proxy)
+
+**Статус:** ✅ Готов к дальнейшей разработке
+
+---
+
+## 📦 Установка (локальная разработка)
 
 ```bash
 # Клонировать репозиторий
-git clone <repository-url>
-cd Freedom
+git clone https://github.com/Sancheklaus86/massazhnyy-salon-svoboda.git
+cd massazhnyy-salon-svoboda
 
 # Установить зависимости
 npm install
